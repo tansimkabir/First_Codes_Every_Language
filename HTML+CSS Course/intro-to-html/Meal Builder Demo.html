@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FoodPrint – Meal Builder & Alternatives</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #ef4444;
+      --border: #1f2937;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #172554, #020617);
+      color: var(--text);
+    }
+
+    header {
+      padding: 16px 32px;
+      border-bottom: 1px solid #1f2937;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    main {
+      padding: 24px 32px 40px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 3fr 4fr 3fr;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .panel {
+      background: linear-gradient(135deg, #020617, #020617 60%, #022c22);
+      border-radius: var(--radius);
+      padding: 16px 18px 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    }
+
+    .panel h2 {
+      margin: 0 0 4px;
+      font-size: 1.05rem;
+    }
+
+    .panel p.sub {
+      margin: 0 0 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .field-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.85);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    button {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .search-results {
+      max-height: 240px;
+      overflow: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: #020617;
+    }
+
+    .search-item {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #020617;
+      font-size: 0.9rem;
+    }
+
+    .search-item:last-child {
+      border-bottom: none;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.18);
+      color: var(--muted);
+    }
+
+    .badge-high {
+      background: rgba(248,113,113,0.18);
+      color: #fecaca;
+    }
+
+    .badge-low {
+      background: rgba(34,197,94,0.18);
+      color: #bbf7d0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 6px 4px;
+      text-align: left;
+      border-bottom: 1px solid #020617;
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .meal-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .meal-summary .total {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .impact-chip {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(248,113,113,0.12);
+      border: 1px solid rgba(248,113,113,0.3);
+      color: #fecaca;
+    }
+
+    .alternatives {
+      margin-top: 12px;
+    }
+
+    .alt-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: radial-gradient(circle at top left, #1e293b, #020617);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alt-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .summary-card {
+      background: radial-gradient(circle at top, #022c22, #020617);
+      border-radius: var(--radius);
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 4px;
+      font-size: 0.95rem;
+    }
+
+    .summary-metric {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .store-pill {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #020617;
+    }
+
+    .store-name {
+      font-weight: 600;
+    }
+
+    .store-price {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">Food<span>Print</span> · Meal Builder</div>
+    <div class="tagline">Build your meal · See the footprint · Swap to better options</div>
+  </div>
+</header>
+
+<main>
+  <div class="layout">
+
+    <!-- LEFT: SEARCH & ADD -->
+    <section class="panel">
+      <h2>1 · Add foods to your meal</h2>
+      <p class="sub">Search for items, set a quantity, then add them into your current plate.</p>
+
+      <div class="field-label">Search food</div>
+      <div class="search-row">
+        <input type="text" placeholder="e.g. beef mince, lentils, apples…">
+        <button class="btn-primary">Search</button>
+      </div>
+
+      <div class="field-label">Search results (example data)</div>
+      <div class="search-results">
+        <div class="search-item">
+          <div>
+            Beef mince (100g)
+            <div class="alt-meta">7.5 kg CO₂e / 100g</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="badge badge-high">High impact</span>
+            <button class="btn-ghost">Add</button>
+          </div>
+        </div>
+        <div class="search-item">
+          <div>
+            Red lentils (100g)
+            <div class="alt-meta">0.9 kg CO₂e / 100g</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="badge badge-low">Low impact</span>
+            <button class="btn-ghost">Add</button>
+          </div>
+        </div>
+        <div class="search-item">
+          <div>
+            Seasonal apples (1 piece)
+            <div class="alt-meta">0.3 kg CO₂e / piece</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="badge badge-low">Low impact</span>
+            <button class="btn-ghost">Add</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MIDDLE: CURRENT MEAL & ALTERNATIVES -->
+    <section class="panel">
+      <h2>2 · Your current meal</h2>
+      <p class="sub">See the CO₂ footprint of each ingredient in this plate.</p>
+
+      <table>
+        <thead>
+        <tr>
+          <th>Food</th>
+          <th>Qty</th>
+          <th>CO₂e</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Beef mince</td>
+          <td>150 g</td>
+          <td>11.3 kg</td>
+          <td><button class="btn-ghost">Remove</button></td>
+        </tr>
+        <tr>
+          <td>White rice</td>
+          <td>200 g</td>
+          <td>1.4 kg</td>
+          <td><button class="btn-ghost">Remove</button></td>
+        </tr>
+        <tr>
+          <td>Mixed salad</td>
+          <td>100 g</td>
+          <td>0.4 kg</td>
+          <td><button class="btn-ghost">Remove</button></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="meal-summary">
+        <div>
+          <div class="field-label">Total meal footprint</div>
+          <div class="total">13.1 kg CO₂e</div>
+        </div>
+        <div>
+          <div class="field-label">Impact rating</div>
+          <span class="impact-chip">High impact · good swap potential</span>
+        </div>
+      </div>
+
+      <div class="alternatives">
+        <div class="field-label">Smart alternatives for this meal</div>
+
+        <div class="alt-card">
+          <div>
+            Swap <strong>beef mince</strong> → <strong>red lentils</strong>
+            <div class="alt-meta">Save ~9.0 kg CO₂e per serving</div>
+          </div>
+          <button class="btn-primary">Swap in meal</button>
+        </div>
+
+        <div class="alt-card">
+          <div>
+            Swap <strong>white rice</strong> → <strong>boiled potatoes</strong>
+            <div class="alt-meta">Save ~0.5 kg CO₂e per serving</div>
+          </div>
+          <button class="btn-primary">Swap in meal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: SUMMARY & SUPERMARKETS -->
+    <aside class="panel">
+      <h2>3 · Save & buy smarter</h2>
+      <p class="sub">Save this meal for tracking and see where to buy the low-carbon swaps locally.</p>
+
+      <div class="summary-card">
+        <h3>Today’s meal summary</h3>
+        <div class="summary-metric">• Current footprint: <strong>13.1 kg CO₂e</strong></div>
+        <div class="summary-metric">• If you apply all swaps: <strong>3.4 kg CO₂e</strong></div>
+        <div class="summary-metric">• Potential saving: <strong>−9.7 kg CO₂e</strong></div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn-primary">Save meal</button>
+        <button class="btn-ghost">Clear meal</button>
+      </div>
+
+      <div class="summary-card">
+        <h3>Where to buy your swaps</h3>
+        <p class="summary-metric">Example supermarket data (from our mock dataset):</p>
+
+        <div class="stores">
+          <div class="store-pill">
+            <span class="store-name">Tesco</span>
+            <span class="store-price">£0.99</span>
+          </div>
+          <div class="store-pill">
+            <span class="store-name">Asda</span>
+            <span class="store-price">£0.95</span>
+          </div>
+          <div class="store-pill">
+            <span class="store-name">Sainsbury’s</span>
+            <span class="store-price">£1.05</span>
+          </div>
+          <div class="store-pill">
+            <span class="store-name">Lidl</span>
+            <span class="store-price">£0.89</span>
+          </div>
+        </div>
+
+        <p class="hint">
+          In the real system these prices and stores would be loaded from our database or
+          external supermarket APIs. For now, we use example data to prototype the design.
+        </p>
+      </div>
+    </aside>
+
+  </div>
+</main>
+</body>
+</html>
